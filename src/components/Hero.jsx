@@ -1,10 +1,13 @@
 export default function Hero() {
+  const h = new Date().getHours()
+  const greeting = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'
   return (
     <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
       <div className="max-w-3xl space-y-6">
         <div className="inline-block px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full text-xs text-purple-400">
           ✨ Available for new projects
         </div>
+        <p className="text-lg text-slate-300">{greeting} 👋</p>
         <h1 className="text-6xl md:text-7xl font-bold tracking-tight">
           Hi, I'm{' '}
           <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
