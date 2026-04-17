@@ -2,9 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alex Chen — Solo Founder Portfolio</title>
+    <title>Alex Chen — Solo Founder</title>
+    <script>
+      // Pre-hydration theme bootstrap to avoid FOUC.
+      // Strictly whitelists stored value; any tampering falls back to system.
+      (function () {
+        try {
+          var KEY = 'portfolio:theme';
+          var stored = null;
+          try { stored = window.localStorage.getItem(KEY); } catch (e) {}
+          var valid = stored === 'light' || stored === 'dark';
+          var theme;
+          if (valid) {
+            theme = stored;
+          } else {
+            theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+          }
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {
+          // Fail closed to default (light); React will reconcile on mount.
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
