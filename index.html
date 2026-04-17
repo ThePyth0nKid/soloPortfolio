@@ -2,9 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alex Chen — Solo Founder Portfolio</title>
+    <title>Alex Chen — Solo Founder</title>
+    <script>
+      // Apply theme before paint to avoid a flash of the wrong theme (FOUC).
+      // Mirrors logic in src/hooks/useTheme.js — kept minimal & dependency-free.
+      (function () {
+        try {
+          var STORAGE_KEY = 'portfolio:theme'
+          var stored = localStorage.getItem(STORAGE_KEY)
+          var prefersDark =
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches
+          var theme = stored === 'light' || stored === 'dark'
+            ? stored
+            : (prefersDark ? 'dark' : 'light')
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark')
+          }
+        } catch (_) {
+          // If storage/matchMedia fail, fall through to default light theme.
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
