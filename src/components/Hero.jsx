@@ -1,15 +1,34 @@
 export default function Hero() {
+  // The platform knows what time it is. No state, no effect, no re-render loop needed —
+  // this mounts once and the greeting is correct for the user's local clock.
+  const hour = new Date().getHours()
+  const greeting =
+    hour < 5 ? 'Burning the midnight oil' :
+    hour < 12 ? 'Good morning' :
+    hour < 18 ? 'Good afternoon' :
+    'Good evening'
+
+  // Map time-of-day to a hue in oklch so the accent shifts with the sun.
+  // Morning = warm amber, afternoon = purple (brand), evening = deep magenta, night = cool indigo.
+  const hue =
+    hour < 5 ? 270 :
+    hour < 12 ? 70 :
+    hour < 18 ? 310 :
+    330
+
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+    <section
+      className="hero"
+      style={{ '--tod-hue': hue }}
+    >
       <div className="max-w-3xl space-y-6">
-        <div className="inline-block px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full text-xs text-purple-400">
-          ✨ Available for new projects
+        <div className="greeting-pill">
+          <span className="greeting-dot" aria-hidden="true" />
+          {greeting}, friend
         </div>
         <h1 className="text-6xl md:text-7xl font-bold tracking-tight">
           Hi, I'm{' '}
-          <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Alex
-          </span>
+          <span className="name-gradient">Alex</span>
         </h1>
         <p className="text-xl text-slate-400 max-w-xl mx-auto">
           Solo founder building tools that don't suck. Currently obsessed with
