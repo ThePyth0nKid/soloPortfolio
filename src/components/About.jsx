@@ -3,7 +3,7 @@ export default function About() {
     <section id="about" className="py-24 px-6">
       <div className="max-w-3xl mx-auto space-y-6">
         <h2 className="text-4xl font-bold">About</h2>
-        <div className="space-y-4 text-slate-400 leading-relaxed">
+        <div className="space-y-4 text-slate-600 dark:text-slate-400 leading-relaxed">
           <p>
             I've spent the last 8 years building products at startups and big
             tech. Burned out twice, learned some lessons. Now I build alone —
@@ -23,7 +23,7 @@ export default function About() {
           {['React', 'TypeScript', 'Python', 'Postgres', 'AI/ML', 'Design'].map((skill) => (
             <span
               key={skill}
-              className="px-3 py-1 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300"
+              className="px-3 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-xs text-slate-700 dark:text-slate-300 theme-transition"
             >
               {skill}
             </span>
