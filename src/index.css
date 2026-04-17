@@ -3,8 +3,31 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    /* Smooth the initial theme paint — prevents flash when toggling */
+    color-scheme: light dark;
+  }
+
   body {
-    @apply bg-slate-950 text-slate-100 antialiased;
+    @apply bg-white text-slate-900 antialiased transition-colors duration-300;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  html.dark body {
+    @apply bg-slate-950 text-slate-100;
+  }
+
+  /* Respect users who prefer reduced motion — no theme transition shimmer */
+  @media (prefers-reduced-motion: reduce) {
+    body {
+      @apply transition-none;
+    }
+  }
+}
+
+@layer utilities {
+  /* Accessible focus ring that works in both themes */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950;
   }
 }
