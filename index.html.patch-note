@@ -1,0 +1,20 @@
+Security Considerations for Dark Mode Toggle
+============================================
+
+1. Input validation: localStorage theme value is validated against a strict
+   allow-list ['light', 'dark']. Tampered values are discarded and cleared.
+2. Storage safety: All localStorage access is wrapped in try/catch to handle
+   sandboxed iframes, private browsing, and quota errors.
+3. DOM safety: We only toggle a CSS class on <html>. No user-controlled string
+   is injected into innerHTML/DOM, eliminating XSS surface.
+4. Rate limiting: Toggle button enforces a 150ms minimum interval between
+   activations to prevent event-flood abuse.
+5. Accessibility as security: aria-pressed, aria-label, and focus-visible
+   ring ensure the control is usable by assistive tech and keyboard — reducing
+   the risk of users being unable to exit a state.
+6. Privacy / GDPR: Theme preference is a non-identifying functional setting,
+   not PII. No consent banner required under GDPR Recital 30 (strictly
+   necessary functional cookies/storage). No retention policy needed — user
+   can clear via browser storage controls.
+7. No network calls; entirely client-side. No new third-party deps introduced,
+   so no new supply-chain surface.
