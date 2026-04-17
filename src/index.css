@@ -8,3 +8,122 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 }
+
+@layer components {
+  /* Hero entrance: each sibling staggers in via animation-delay (set inline). */
+  .hero-item {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: hero-in 420ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  /* Greeting chip: swaps cleanly when the time-of-day key changes.
+     The `key` prop on the element forces React to remount, replaying the animation. */
+  .greeting-chip {
+    animation: chip-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    transition: border-color 200ms ease-out, background-color 200ms ease-out, transform 200ms ease-out;
+    will-change: transform, opacity;
+  }
+  .greeting-chip:hover {
+    transform: translateY(-1px);
+    border-color: rgb(148 163 184 / 0.4);
+  }
+
+  .greeting-icon {
+    display: inline-block;
+    animation: icon-pop 520ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    transform-origin: 50% 60%;
+  }
+
+  .btn-primary {
+    transition:
+      background-color 180ms ease-out,
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 220ms ease-out;
+    will-change: transform;
+  }
+  .btn-primary:hover {
+    background-color: rgb(168 85 247);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 30px -12px rgb(168 85 247 / 0.6);
+  }
+  .btn-primary:active {
+    transform: translateY(0) scale(0.98);
+  }
+  .btn-primary:focus-visible {
+    outline: 2px solid rgb(216 180 254);
+    outline-offset: 3px;
+  }
+
+  .btn-ghost {
+    transition:
+      border-color 180ms ease-out,
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 180ms ease-out;
+  }
+  .btn-ghost:hover {
+    border-color: rgb(148 163 184);
+    transform: translateY(-1px);
+    background-color: rgb(30 41 59 / 0.5);
+  }
+  .btn-ghost:active {
+    transform: translateY(0) scale(0.98);
+  }
+  .btn-ghost:focus-visible {
+    outline: 2px solid rgb(148 163 184);
+    outline-offset: 3px;
+  }
+}
+
+@keyframes hero-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes chip-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes icon-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-18deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.15) rotate(6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-item,
+  .greeting-chip,
+  .greeting-icon {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .btn-primary,
+  .btn-ghost {
+    transition: background-color 120ms ease-out, border-color 120ms ease-out;
+  }
+  .btn-primary:hover,
+  .btn-ghost:hover,
+  .btn-primary:active,
+  .btn-ghost:active {
+    transform: none;
+  }
+}
