@@ -4,7 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alex Chen — Solo Founder Portfolio</title>
+    <title>Alex Chen — Solo Founder</title>
+    <script>
+      // Inline theme bootstrapper: applies the correct `dark` class before
+      // React mounts, preventing a flash of incorrect theme (FOIT).
+      (function () {
+        try {
+          var STORAGE_KEY = 'portfolio:theme'
+          var stored = localStorage.getItem(STORAGE_KEY)
+          var prefersDark =
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches
+          var isDark = stored === 'dark' || (!stored && prefersDark)
+          if (isDark) document.documentElement.classList.add('dark')
+        } catch (_) {
+          /* no-op */
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
