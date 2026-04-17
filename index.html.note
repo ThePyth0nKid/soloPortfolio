@@ -1,0 +1,16 @@
+Note: index.html not shown in context. If a FOUC (flash of wrong theme) appears on reload, add this inline script in <head> BEFORE any CSS/JS to apply the theme synchronously:
+
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('theme-preference');
+    var valid = t === 'light' || t === 'dark';
+    if (!valid) {
+      t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (t === 'dark') document.documentElement.classList.add('dark');
+  } catch(e) {}
+})();
+</script>
+
+Security: the script validates the stored value against an allow-list before applying, so a tampered localStorage entry cannot inject arbitrary class names.
