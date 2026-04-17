@@ -8,3 +8,164 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 }
+
+/* ---------------------------------------------------------------
+   Hero — time-of-day aware.
+   The React component sets data-tod; every visual difference
+   between morning/afternoon/evening/night is derived from a single
+   accent color via color-mix(), using CSS nesting + logical props.
+   --------------------------------------------------------------- */
+@layer components {
+  .hero {
+    --accent: oklch(72% 0.17 300); /* default: purple */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 1.5rem;
+    text-align: center;
+
+    &[data-tod='morning']   { --accent: oklch(80% 0.15  70); } /* warm sunrise */
+    &[data-tod='afternoon'] { --accent: oklch(78% 0.16 230); } /* clear sky    */
+    &[data-tod='evening']   { --accent: oklch(70% 0.19  25); } /* dusk orange  */
+    &[data-tod='night']     { --accent: oklch(72% 0.17 280); } /* moonlit      */
+
+    /* Soft radial wash behind the hero, tinted by time of day. */
+    background:
+      radial-gradient(
+        ellipse at 50% 0%,
+        color-mix(in oklch, var(--accent) 18%, transparent) 0%,
+        transparent 60%
+      );
+  }
+
+  .hero__inner {
+    max-inline-size: 48rem;
+    display: grid;
+    gap: 1.5rem;
+    justify-items: center;
+  }
+
+  .hero__greeting {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding-block: 0.4rem;
+    padding-inline: 0.9rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
+    color: color-mix(in oklch, var(--accent) 85%, white);
+    background: color-mix(in oklch, var(--accent) 12%, transparent);
+    border: 1px solid color-mix(in oklch, var(--accent) 35%, transparent);
+    animation: hero-greeting-in 600ms ease-out both;
+
+    @supports at-rule(@starting-style) {}
+  }
+
+  @starting-style {
+    .hero__greeting { opacity: 0; transform: translateY(-4px); }
+  }
+
+  .hero__greeting-icon {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .hero__greeting-dot {
+    inline-size: 0.4rem;
+    block-size: 0.4rem;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--accent) 60%, transparent);
+    animation: hero-pulse 2.4s ease-out infinite;
+  }
+
+  .hero__badge {
+    display: inline-block;
+    padding-block: 0.25rem;
+    padding-inline: 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    color: oklch(75% 0.14 300);
+    background: color-mix(in oklch, oklch(70% 0.2 300) 10%, transparent);
+    border: 1px solid color-mix(in oklch, oklch(70% 0.2 300) 30%, transparent);
+  }
+
+  .hero__title {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  .hero__name {
+    background: linear-gradient(
+      90deg,
+      var(--accent),
+      color-mix(in oklch, var(--accent) 50%, oklch(75% 0.2 340))
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero__lede {
+    font-size: 1.125rem;
+    color: oklch(75% 0.02 260);
+    max-inline-size: 36rem;
+  }
+
+  .hero__cta {
+    display: flex;
+    gap: 0.75rem;
+    padding-block-start: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn {
+    padding-block: 0.75rem;
+    padding-inline: 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+
+    &.btn--primary {
+      background: var(--accent);
+      color: oklch(18% 0.03 260);
+
+      &:hover {
+        background: color-mix(in oklch, var(--accent) 80%, white);
+      }
+    }
+
+    &.btn--ghost {
+      border: 1px solid oklch(40% 0.02 260);
+      color: inherit;
+
+      &:hover {
+        border-color: color-mix(in oklch, var(--accent) 60%, white);
+      }
+    }
+  }
+}
+
+@keyframes hero-greeting-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-pulse {
+  0%   { box-shadow: 0 0 0 0   color-mix(in oklch, var(--accent) 60%, transparent); }
+  70%  { box-shadow: 0 0 0 8px color-mix(in oklch, var(--accent)  0%, transparent); }
+  100% { box-shadow: 0 0 0 0   color-mix(in oklch, var(--accent)  0%, transparent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__greeting,
+  .hero__greeting-dot {
+    animation: none;
+  }
+}
