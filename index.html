@@ -2,9 +2,26 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alex Chen — Solo Founder Portfolio</title>
+    <title>Alex Chen — Solo Founder</title>
+    <script>
+      // Inline, no-op-safe theme bootstrapper to avoid FOUC.
+      // Only reads an allowlisted value; never injects untrusted content into DOM.
+      (function () {
+        try {
+          var raw = window.localStorage && window.localStorage.getItem('theme-preference');
+          var theme = (raw === 'light' || raw === 'dark')
+            ? raw
+            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {
+          // Default to dark on failure (matches prior design).
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
