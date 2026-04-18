@@ -2,9 +2,155 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ------------------------------------------------------------------
+   Theme tokens via @layer + oklch. No JS color math, no hex scales.
+   The root exposes semantic tokens; :root.dark overrides them.
+   Default (no class) follows prefers-color-scheme via @media.
+   ------------------------------------------------------------------ */
 @layer base {
+  :root {
+    color-scheme: light;
+
+    --bg:         oklch(98% 0.01 250);
+    --bg-elev:    oklch(95% 0.015 250);
+    --bg-muted:   oklch(93% 0.02 250);
+    --fg:         oklch(22% 0.03 265);
+    --fg-muted:   oklch(45% 0.02 265);
+    --fg-subtle:  oklch(60% 0.015 265);
+    --border:     oklch(88% 0.015 260);
+    --border-strong: oklch(78% 0.02 260);
+    --accent:     oklch(62% 0.22 300);
+    --accent-hi:  oklch(70% 0.22 300);
+    --accent-fg:  oklch(99% 0.005 300);
+    --accent-tint: color-mix(in oklch, var(--accent) 12%, transparent);
+  }
+
+  /* System preference default — only applies when user hasn't chosen */
+  @media (prefers-color-scheme: dark) {
+    :root:not(.light):not(.dark) {
+      color-scheme: dark;
+      --bg:         oklch(16% 0.02 265);
+      --bg-elev:    oklch(20% 0.025 265);
+      --bg-muted:   oklch(24% 0.03 265);
+      --fg:         oklch(96% 0.01 250);
+      --fg-muted:   oklch(72% 0.02 255);
+      --fg-subtle:  oklch(55% 0.02 260);
+      --border:     oklch(30% 0.02 265);
+      --border-strong: oklch(40% 0.025 265);
+      --accent:     oklch(70% 0.2 300);
+      --accent-hi:  oklch(78% 0.2 300);
+      --accent-fg:  oklch(18% 0.02 265);
+      --accent-tint: color-mix(in oklch, var(--accent) 14%, transparent);
+    }
+  }
+
+  /* Explicit user choice wins */
+  :root.dark {
+    color-scheme: dark;
+    --bg:         oklch(16% 0.02 265);
+    --bg-elev:    oklch(20% 0.025 265);
+    --bg-muted:   oklch(24% 0.03 265);
+    --fg:         oklch(96% 0.01 250);
+    --fg-muted:   oklch(72% 0.02 255);
+    --fg-subtle:  oklch(55% 0.02 260);
+    --border:     oklch(30% 0.02 265);
+    --border-strong: oklch(40% 0.025 265);
+    --accent:     oklch(70% 0.2 300);
+    --accent-hi:  oklch(78% 0.2 300);
+    --accent-fg:  oklch(18% 0.02 265);
+    --accent-tint: color-mix(in oklch, var(--accent) 14%, transparent);
+  }
+
+  :root.light {
+    color-scheme: light;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--fg);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
   body {
-    @apply bg-slate-950 text-slate-100 antialiased;
+    @apply antialiased;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Theme toggle component. A <button> with aria-pressed drives state;
+   the sun/moon swap is pure CSS via :has() on :root.
+   ------------------------------------------------------------------ */
+@layer components {
+  .theme-toggle {
+    position: fixed;
+    inset-block-start: 1rem;
+    inset-inline-end: 1rem;
+    z-index: 50;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 9999px;
+    border: 1px solid var(--border-strong);
+    background: color-mix(in oklch, var(--bg-elev) 80%, transparent);
+    color: var(--fg);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+
+    & svg {
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+      transition: opacity 0.25s ease, transform 0.35s ease;
+    }
+
+    & .icon-sun  { grid-area: 1 / 1; }
+    & .icon-moon { grid-area: 1 / 1; }
+
+    &:hover {
+      border-color: var(--accent);
+      background: var(--accent-tint);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+  }
+
+  /* Default: show moon (we're in light, click to go dark) */
+  .theme-toggle .icon-sun  { opacity: 0; transform: rotate(-90deg) scale(0.6); }
+  .theme-toggle .icon-moon { opacity: 1; transform: rotate(0) scale(1); }
+
+  /* When the document is dark (either explicit or system), show sun */
+  :root.dark .theme-toggle .icon-sun,
+  :root:not(.light):not(.dark) .theme-toggle .icon-sun {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+  :root.dark .theme-toggle .icon-moon,
+  :root:not(.light):not(.dark) .theme-toggle .icon-moon {
+    opacity: 1;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not(.light):not(.dark) .theme-toggle .icon-sun {
+      opacity: 1;
+      transform: rotate(0) scale(1);
+    }
+    :root:not(.light):not(.dark) .theme-toggle .icon-moon {
+      opacity: 0;
+      transform: rotate(90deg) scale(0.6);
+    }
+  }
+
+  :root.dark .theme-toggle .icon-sun {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
+  :root.dark .theme-toggle .icon-moon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.6);
   }
 }
