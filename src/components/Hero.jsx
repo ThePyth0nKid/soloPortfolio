@@ -1,6 +1,6 @@
 export default function Hero() {
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+    <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
       <div className="max-w-3xl space-y-6">
         <div className="inline-block px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full text-xs text-purple-400">
           ✨ Available for new projects
@@ -18,13 +18,13 @@ export default function Hero() {
         <div className="flex gap-3 justify-center pt-4">
           <a
             href="#projects"
-            className="px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-lg font-medium transition-colors"
+            className="px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-lg font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
           >
             See my work
           </a>
           <a
             href="#about"
-            className="px-6 py-3 border border-slate-700 hover:border-slate-500 rounded-lg font-medium transition-colors"
+            className="px-6 py-3 border border-slate-700 hover:border-slate-500 rounded-lg font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
           >
             About me
           </a>
