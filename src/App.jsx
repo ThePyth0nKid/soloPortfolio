@@ -4,6 +4,7 @@ import About from './components/About'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
 import Timeline from './components/Timeline'
+import KeyboardHelp from './components/KeyboardHelp'
 
 const SECTION_IDS = ['top', 'about', 'projects', 'skills', 'timeline']
 
@@ -24,24 +25,35 @@ function currentSectionIndex() {
 }
 
 export default function App() {
-  const [helpOpen, setHelpOpen] = useState(false)
-  const dialogRef = useRef(null)
+  const popoverRef = useRef(null)
   const gPending = useRef(false)
   const gTimer = useRef(null)
+  const [hint, setHint] = useState('')
 
   useEffect(() => {
+    function isEditable(t) {
+      if (!t) return false
+      const tag = t.tagName
+      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t.isContentEditable
+    }
+
+    function togglePopover(force) {
+      const el = popoverRef.current
+      if (!el) return
+      try {
+        if (force === true) el.showPopover?.()
+        else if (force === false) el.hidePopover?.()
+        else el.togglePopover?.()
+      } catch {}
+    }
+
     function onKey(e) {
-      const t = e.target
-      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return
+      if (isEditable(e.target)) return
       if (e.metaKey || e.ctrlKey || e.altKey) return
 
-      if (e.key === '?') {
+      if (e.key === '?' || (e.shiftKey && e.key === '/')) {
         e.preventDefault()
-        setHelpOpen(true)
-        return
-      }
-      if (e.key === 'Escape' && helpOpen) {
-        setHelpOpen(false)
+        togglePopover()
         return
       }
       if (e.key === 'j') {
@@ -56,25 +68,32 @@ export default function App() {
       }
       if (e.key === 'g') {
         gPending.current = true
+        setHint('g…')
         clearTimeout(gTimer.current)
-        gTimer.current = setTimeout(() => { gPending.current = false }, 800)
+        gTimer.current = setTimeout(() => {
+          gPending.current = false
+          setHint('')
+        }, 1000)
         return
       }
       if (e.key === 't' && gPending.current) {
+        e.preventDefault()
         gPending.current = false
+        setHint('')
         scrollToId('top')
+        return
+      }
+      if (e.key === 'G') {
+        e.preventDefault()
+        scrollToId(SECTION_IDS[SECTION_IDS.length - 1])
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [helpOpen])
-
-  useEffect(() => {
-    const d = dialogRef.current
-    if (!d) return
-    if (helpOpen && !d.open) d.showModal()
-    if (!helpOpen && d.open) d.close()
-  }, [helpOpen])
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      clearTimeout(gTimer.current)
+    }
+  }, [])
 
   return (
     <div className="min-h-screen">
@@ -83,9 +102,20 @@ export default function App() {
       <Projects />
       <Skills />
       <Timeline />
-      <footer className="py-8 text-center text-sm text-slate-500 border-t border-slate-800">
-        © 2026 Alex Chen
+      <footer className="py-8 text-center text-xs text-slate-500">
+        Press <kbd className="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded">?</kbd> for keyboard shortcuts
       </footer>
+
+      <KeyboardHelp ref={popoverRef} />
+
+      {hint && (
+        <div
+          aria-live="polite"
+          className="fixed bottom-4 right-4 px-3 py-1.5 bg-slate-800/90 border border-slate-700 rounded-md text-sm font-mono text-slate-200 backdrop-blur pointer-events-none"
+        >
+          {hint}
+        </div>
+      )}
     </div>
   )
 }
