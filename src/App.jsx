@@ -3,8 +3,9 @@ import Hero from './components/Hero'
 import About from './components/About'
 import Projects from './components/Projects'
 import Timeline from './components/Timeline'
+import Contact from './components/Contact'
 
-const SECTION_IDS = ['top', 'about', 'projects', 'timeline']
+const SECTION_IDS = ['top', 'about', 'projects', 'timeline', 'contact']
 
 function scrollToId(id) {
   if (id === 'top') return window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -77,37 +78,24 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-      <Hero />
-      <About />
-      <Projects />
-      <Timeline />
-      <footer className="py-8 text-center text-sm text-slate-500 border-t border-slate-800">
-        © 2026 Alex Chen — built with too much coffee ☕ · press <kbd className="px-1 border border-slate-700 rounded">?</kbd> for shortcuts
-      </footer>
-      <dialog
-        ref={dialogRef}
-        onClose={() => setHelpOpen(false)}
-        className="bg-slate-900 text-slate-100 border border-slate-700 rounded-xl p-6 backdrop:bg-black/60 max-w-sm"
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50
+                   focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-lg
+                   focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-300"
       >
-        <h2 className="text-lg font-semibold mb-4">Keyboard shortcuts</h2>
-        <ul className="space-y-2 text-sm">
-          {[
-            ['j', 'Next section'],
-            ['k', 'Previous section'],
-            ['g t', 'Go to top'],
-            ['?', 'Toggle this help'],
-            ['Esc', 'Close this help'],
-          ].map(([k, d]) => (
-            <li key={k} className="flex justify-between gap-6">
-              <kbd className="px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs font-mono">{k}</kbd>
-              <span className="text-slate-400">{d}</span>
-            </li>
-          ))}
-        </ul>
-        <form method="dialog" className="mt-6 text-right">
-          <button className="px-3 py-1 text-sm border border-slate-700 hover:border-slate-500 rounded-md">Close</button>
-        </form>
-      </dialog>
+        Skip to main content
+      </a>
+      <main id="main">
+        <Hero />
+        <About />
+        <Projects />
+        <Timeline />
+        <Contact />
+      </main>
+      <footer className="py-8 text-center text-sm text-slate-500 border-t border-slate-800">
+        © 2026 Alex Chen
+      </footer>
     </div>
   )
 }
