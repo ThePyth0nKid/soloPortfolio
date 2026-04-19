@@ -1,0 +1,127 @@
+@layer components {
+  .skills-section {
+    padding-block: 6rem;
+    padding-inline: 1.5rem;
+    background: color-mix(in oklch, oklch(20% 0.03 270) 40%, transparent);
+  }
+
+  .skills-inner {
+    max-inline-size: 56rem;
+    margin-inline: auto;
+    display: grid;
+    gap: 2rem;
+
+    & > h2 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    & .skills-lede {
+      color: oklch(70% 0.02 270);
+      max-inline-size: 40rem;
+      line-height: 1.6;
+
+      & code {
+        font-size: 0.85em;
+        padding: 0.1em 0.35em;
+        border-radius: 0.3em;
+        background: oklch(25% 0.02 270);
+        color: oklch(85% 0.08 300);
+      }
+    }
+  }
+
+  .skills-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: 1rem;
+  }
+
+  .skill {
+    --bar-color: oklch(70% 0.18 var(--hue));
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    background: oklch(18% 0.02 270);
+    border: 1px solid oklch(30% 0.02 270);
+    transition: border-color 150ms ease, transform 150ms ease;
+
+    &:hover {
+      border-color: color-mix(in oklch, var(--bar-color) 50%, transparent);
+    }
+  }
+
+  .skill-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .skill-name {
+    font-weight: 500;
+    color: oklch(95% 0.01 270);
+  }
+
+  .skill-value {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    color: color-mix(in oklch, var(--bar-color) 70%, white 10%);
+  }
+
+  .skill-bar {
+    grid-column: 1 / -1;
+    block-size: 0.5rem;
+    inline-size: 100%;
+    border-radius: 999px;
+    background: oklch(25% 0.02 270);
+    overflow: hidden;
+  }
+
+  .skill-bar-fill {
+    block-size: 100%;
+    inline-size: calc(var(--value) * 1%);
+    border-radius: inherit;
+    background: linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--bar-color) 60%, black) 0%,
+      var(--bar-color) 100%
+    );
+    transform-origin: left center;
+    /* Fallback: simple on-mount animation */
+    transform: scaleX(1);
+    animation: skill-fill-fallback 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  @keyframes skill-fill-fallback {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+
+  /* Progressive enhancement: scroll-driven animation on browsers that support it.
+     The bar scales from 0 → 1 as the skill card enters the viewport. */
+  @supports (animation-timeline: view()) {
+    .skill-bar-fill {
+      animation: skill-fill linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+
+    @keyframes skill-fill {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skill-bar-fill {
+      animation: none;
+      transform: scaleX(1);
+    }
+  }
+}
