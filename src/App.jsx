@@ -4,6 +4,9 @@ import About from './components/About'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
 import Timeline from './components/Timeline'
+import ShortcutsHelp from './components/ShortcutsHelp'
+import ShortcutHint from './components/ShortcutHint'
+import KeyPressIndicator from './components/KeyPressIndicator'
 
 const SECTION_IDS = ['top', 'about', 'projects', 'skills', 'timeline']
 
@@ -23,27 +26,44 @@ function currentSectionIndex() {
   return idx
 }
 
+function isEditable(t) {
+  if (!t) return false
+  const tag = t.tagName
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t.isContentEditable
+}
+
 export default function App() {
   const [helpOpen, setHelpOpen] = useState(false)
-  const dialogRef = useRef(null)
+  const [pendingKeys, setPendingKeys] = useState([])
   const gPending = useRef(false)
   const gTimer = useRef(null)
+  const pendingTimer = useRef(null)
+
+  const clearPending = () => {
+    gPending.current = false
+    setPendingKeys([])
+    clearTimeout(pendingTimer.current)
+  }
 
   useEffect(() => {
     function onKey(e) {
-      const t = e.target
-      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return
+      if (isEditable(e.target)) return
       if (e.metaKey || e.ctrlKey || e.altKey) return
 
       if (e.key === '?') {
         e.preventDefault()
-        setHelpOpen(true)
+        setHelpOpen((v) => !v)
         return
       }
-      if (e.key === 'Escape' && helpOpen) {
-        setHelpOpen(false)
+      if (e.key === 'Escape') {
+        if (helpOpen) setHelpOpen(false)
+        clearPending()
         return
       }
+
+      // Block other shortcuts while help dialog is open (let dialog handle focus)
+      if (helpOpen) return
+
       if (e.key === 'j') {
         e.preventDefault()
         scrollToId(SECTION_IDS[Math.min(SECTION_IDS.length - 1, currentSectionIndex() + 1)])
@@ -55,25 +75,24 @@ export default function App() {
         return
       }
       if (e.key === 'g') {
+        e.preventDefault()
         gPending.current = true
+        setPendingKeys(['g'])
         clearTimeout(gTimer.current)
-        gTimer.current = setTimeout(() => { gPending.current = false }, 800)
+        clearTimeout(pendingTimer.current)
+        gTimer.current = setTimeout(() => { gPending.current = false }, 1000)
+        pendingTimer.current = setTimeout(() => setPendingKeys([]), 1000)
         return
       }
       if (e.key === 't' && gPending.current) {
-        gPending.current = false
+        e.preventDefault()
+        clearPending()
         scrollToId('top')
+        return
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [helpOpen])
-
-  useEffect(() => {
-    const d = dialogRef.current
-    if (!d) return
-    if (helpOpen && !d.open) d.showModal()
-    if (!helpOpen && d.open) d.close()
   }, [helpOpen])
 
   return (
@@ -83,9 +102,13 @@ export default function App() {
       <Projects />
       <Skills />
       <Timeline />
-      <footer className="py-8 text-center text-sm text-slate-500 border-t border-slate-800">
-        © 2026 Alex Chen
+      <footer className="py-8 text-center text-sm text-slate-500">
+        Press <kbd className="px-1.5 py-0.5 mx-1 rounded border border-slate-700 bg-slate-900 font-mono text-[11px] text-slate-300">?</kbd> for keyboard shortcuts
       </footer>
+
+      <ShortcutHint onOpen={() => setHelpOpen(true)} />
+      <KeyPressIndicator keys={pendingKeys} />
+      <ShortcutsHelp open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   )
 }
