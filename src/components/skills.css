@@ -1,0 +1,120 @@
+@layer components {
+  .skills {
+    padding-block: 6rem;
+    padding-inline: 1.5rem;
+    background: color-mix(in oklch, oklch(20% 0.03 270) 40%, transparent);
+  }
+
+  .skills__inner {
+    max-inline-size: 56rem;
+    margin-inline: auto;
+    display: grid;
+    gap: 2rem;
+
+    & > h2 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+  }
+
+  .skills__lede {
+    color: oklch(70% 0.02 270);
+    font-size: 0.95rem;
+    margin-block-start: -1rem;
+  }
+
+  .skills__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    container-type: inline-size;
+  }
+
+  .skill {
+    display: grid;
+    gap: 0.6rem;
+    padding: 1rem 1.15rem;
+    border-radius: 0.85rem;
+    background: oklch(18% 0.02 270);
+    border: 1px solid oklch(28% 0.02 270);
+    transition: border-color 200ms ease, transform 200ms ease;
+  }
+
+  .skill:hover {
+    border-color: oklch(55% 0.22 305);
+    transform: translateY(-1px);
+  }
+
+  .skill__head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+  }
+
+  .skill__icon {
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .skill__name {
+    font-weight: 600;
+    color: oklch(96% 0.01 270);
+  }
+
+  .skill__value {
+    margin-inline-start: auto;
+    font-variant-numeric: tabular-nums;
+    color: oklch(72% 0.02 270);
+    font-size: 0.8rem;
+  }
+
+  .skill__track {
+    block-size: 0.5rem;
+    border-radius: 999px;
+    background: oklch(26% 0.02 270);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .skill__fill {
+    block-size: 100%;
+    inline-size: calc(var(--level) * 1%);
+    border-radius: inherit;
+    background: linear-gradient(
+      90deg,
+      oklch(70% 0.19 305),
+      oklch(75% 0.18 350)
+    );
+    /* Baseline for browsers without scroll-driven animations:
+       fill is visible at its target width. */
+    transform-origin: left center;
+    transform: scaleX(1);
+  }
+
+  /* Progressive enhancement: animate from 0 -> target as the skill
+     scrolls into the viewport. Zero JS. */
+  @supports (animation-timeline: view()) {
+    .skill__fill {
+      animation: skill-grow linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 35%;
+    }
+
+    @keyframes skill-grow {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .skill__fill {
+        animation: none;
+        transform: scaleX(1);
+      }
+    }
+  }
+}
