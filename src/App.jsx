@@ -4,6 +4,7 @@ import About from './components/About'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
 import Timeline from './components/Timeline'
+import ShortcutsHelp, { SHORTCUTS } from './components/ShortcutsHelp'
 
 const SECTION_IDS = ['top', 'about', 'projects', 'skills', 'timeline']
 
@@ -23,21 +24,25 @@ function currentSectionIndex() {
   return idx
 }
 
+function isEditableTarget(t) {
+  if (!t) return false
+  const tag = t.tagName
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t.isContentEditable
+}
+
 export default function App() {
   const [helpOpen, setHelpOpen] = useState(false)
-  const dialogRef = useRef(null)
   const gPending = useRef(false)
   const gTimer = useRef(null)
 
   useEffect(() => {
     function onKey(e) {
-      const t = e.target
-      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return
+      if (isEditableTarget(e.target)) return
       if (e.metaKey || e.ctrlKey || e.altKey) return
 
       if (e.key === '?') {
         e.preventDefault()
-        setHelpOpen(true)
+        setHelpOpen((o) => !o)
         return
       }
       if (e.key === 'Escape' && helpOpen) {
@@ -63,17 +68,15 @@ export default function App() {
       if (e.key === 't' && gPending.current) {
         gPending.current = false
         scrollToId('top')
+        return
+      }
+      if (e.key === 'G') {
+        e.preventDefault()
+        scrollToId(SECTION_IDS[SECTION_IDS.length - 1])
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [helpOpen])
-
-  useEffect(() => {
-    const d = dialogRef.current
-    if (!d) return
-    if (helpOpen && !d.open) d.showModal()
-    if (!helpOpen && d.open) d.close()
   }, [helpOpen])
 
   return (
@@ -83,9 +86,21 @@ export default function App() {
       <Projects />
       <Skills />
       <Timeline />
-      <footer className="py-8 text-center text-sm text-slate-500 border-t border-slate-800">
-        © 2026 Alex Chen
+      <footer className="py-8 text-center text-xs text-slate-500 space-x-2">
+        <span>© 2025 Alex Chen</span>
+        <span aria-hidden="true">·</span>
+        <button
+          type="button"
+          onClick={() => setHelpOpen(true)}
+          className="inline-flex items-center gap-1 text-slate-400 hover:text-slate-200 transition-colors"
+          aria-label="Show keyboard shortcuts"
+        >
+          Press
+          <kbd className="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-[10px] text-slate-300 font-mono">?</kbd>
+          for shortcuts
+        </button>
       </footer>
+      <ShortcutsHelp open={helpOpen} onClose={() => setHelpOpen(false)} shortcuts={SHORTCUTS} />
     </div>
   )
 }
