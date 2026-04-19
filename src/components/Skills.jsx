@@ -38,12 +38,12 @@ export default function Skills() {
         <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
           {SKILLS.map((skill, i) => (
             <li key={skill.name} className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="flex items-center gap-2 text-slate-200">
-                  <span aria-hidden="true" className="text-base">{skill.icon}</span>
-                  <span className="font-medium">{skill.name}</span>
+              <div className="flex items-center justify-between gap-3 text-sm">
+                <span className="flex items-center gap-2 min-w-0 text-slate-200">
+                  <span aria-hidden="true" className="text-base shrink-0">{skill.icon}</span>
+                  <span className="font-medium truncate">{skill.name}</span>
                 </span>
-                <span className="text-xs text-slate-500 tabular-nums">{skill.value}%</span>
+                <span className="shrink-0 text-xs text-slate-500 tabular-nums">{skill.value}%</span>
               </div>
               <div
                 className="h-2 bg-slate-800 border border-slate-700 rounded-full overflow-hidden"
