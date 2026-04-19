@@ -4,6 +4,7 @@ import About from './components/About'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
 import Timeline from './components/Timeline'
+import KeyboardHelp from './components/KeyboardHelp'
 
 const SECTION_IDS = ['top', 'about', 'projects', 'skills', 'timeline']
 
@@ -24,26 +25,46 @@ function currentSectionIndex() {
 }
 
 export default function App() {
-  const [helpOpen, setHelpOpen] = useState(false)
   const dialogRef = useRef(null)
   const gPending = useRef(false)
   const gTimer = useRef(null)
 
   useEffect(() => {
+    function isEditable(t) {
+      if (!t) return false
+      const tag = t.tagName
+      return (
+        tag === 'INPUT' ||
+        tag === 'TEXTAREA' ||
+        tag === 'SELECT' ||
+        t.isContentEditable
+      )
+    }
+
+    function openHelp() {
+      const d = dialogRef.current
+      if (d && !d.open) d.showModal()
+    }
+    function closeHelp() {
+      const d = dialogRef.current
+      if (d && d.open) d.close()
+    }
+
     function onKey(e) {
-      const t = e.target
-      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return
+      if (isEditable(e.target)) return
       if (e.metaKey || e.ctrlKey || e.altKey) return
+
+      const d = dialogRef.current
+      const helpOpen = d?.open
 
       if (e.key === '?') {
         e.preventDefault()
-        setHelpOpen(true)
+        helpOpen ? closeHelp() : openHelp()
         return
       }
-      if (e.key === 'Escape' && helpOpen) {
-        setHelpOpen(false)
-        return
-      }
+      // Let native <dialog> handle Escape itself.
+      if (helpOpen) return
+
       if (e.key === 'j') {
         e.preventDefault()
         scrollToId(SECTION_IDS[Math.min(SECTION_IDS.length - 1, currentSectionIndex() + 1)])
@@ -54,27 +75,45 @@ export default function App() {
         scrollToId(SECTION_IDS[Math.max(0, currentSectionIndex() - 1)])
         return
       }
+      if (e.key === 'G') {
+        e.preventDefault()
+        scrollToId('timeline')
+        return
+      }
       if (e.key === 'g') {
+        if (gPending.current) {
+          // gg -> top
+          gPending.current = false
+          clearTimeout(gTimer.current)
+          scrollToId('top')
+          return
+        }
         gPending.current = true
         clearTimeout(gTimer.current)
         gTimer.current = setTimeout(() => { gPending.current = false }, 800)
         return
       }
-      if (e.key === 't' && gPending.current) {
+      if (gPending.current && e.key === 't') {
+        e.preventDefault()
         gPending.current = false
+        clearTimeout(gTimer.current)
         scrollToId('top')
+        return
+      }
+      if (gPending.current && e.key === 'b') {
+        e.preventDefault()
+        gPending.current = false
+        clearTimeout(gTimer.current)
+        scrollToId('timeline')
+        return
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [helpOpen])
-
-  useEffect(() => {
-    const d = dialogRef.current
-    if (!d) return
-    if (helpOpen && !d.open) d.showModal()
-    if (!helpOpen && d.open) d.close()
-  }, [helpOpen])
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      clearTimeout(gTimer.current)
+    }
+  }, [])
 
   return (
     <div className="min-h-screen">
@@ -83,9 +122,10 @@ export default function App() {
       <Projects />
       <Skills />
       <Timeline />
-      <footer className="py-8 text-center text-sm text-slate-500 border-t border-slate-800">
-        © 2026 Alex Chen
+      <footer className="py-8 text-center text-slate-500 text-sm">
+        Press <kbd className="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs">?</kbd> for keyboard shortcuts
       </footer>
+      <KeyboardHelp ref={dialogRef} />
     </div>
   )
 }

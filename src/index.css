@@ -8,3 +8,170 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 }
+
+@layer components {
+  /* Native <dialog> modal styled with logical properties, oklch, and @starting-style
+     for entrance animation on browsers that support it. */
+  .kbd-help {
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    max-inline-size: min(92vw, 32rem);
+    inline-size: 100%;
+    margin: auto;
+  }
+
+  .kbd-help::backdrop {
+    background: color-mix(in oklch, black 70%, transparent);
+    backdrop-filter: blur(6px);
+  }
+
+  .kbd-help__inner {
+    display: grid;
+    gap: 1rem;
+    padding-block: 1.25rem;
+    padding-inline: 1.5rem;
+    background: oklch(0.22 0.02 270);
+    border: 1px solid oklch(0.35 0.02 270);
+    border-radius: 0.875rem;
+    box-shadow: 0 20px 60px -10px color-mix(in oklch, black 70%, transparent);
+    color: oklch(0.94 0.01 270);
+  }
+
+  .kbd-help__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    & h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  .kbd-help__close {
+    inline-size: 2rem;
+    block-size: 2rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.5rem;
+    border: 1px solid oklch(0.35 0.02 270);
+    background: transparent;
+    color: inherit;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 120ms ease, border-color 120ms ease;
+
+    &:hover {
+      background: oklch(0.3 0.02 270);
+      border-color: oklch(0.5 0.02 270);
+    }
+  }
+
+  .kbd-help__list {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+  }
+
+  .kbd-help__row {
+    display: grid;
+    grid-template-columns: minmax(7rem, auto) 1fr;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 0.4rem;
+    padding-inline: 0.25rem;
+    border-block-end: 1px dashed oklch(0.3 0.02 270);
+
+    &:last-child {
+      border-block-end: none;
+    }
+
+    & dt {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    & dd {
+      margin: 0;
+      color: oklch(0.75 0.02 270);
+      font-size: 0.9rem;
+    }
+  }
+
+  .kbd-help__then {
+    font-size: 0.75rem;
+    color: oklch(0.6 0.02 270);
+    padding-inline: 0.25rem;
+  }
+
+  .kbd-help kbd {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8rem;
+    padding-block: 0.15rem;
+    padding-inline: 0.45rem;
+    background: oklch(0.28 0.02 270);
+    border: 1px solid oklch(0.4 0.02 270);
+    border-block-end-width: 2px;
+    border-radius: 0.35rem;
+    color: oklch(0.95 0.01 270);
+    min-inline-size: 1.5rem;
+    text-align: center;
+    display: inline-block;
+  }
+
+  .kbd-help__footer {
+    font-size: 0.75rem;
+    color: oklch(0.6 0.02 270);
+    padding-block-start: 0.25rem;
+  }
+
+  /* Entrance animation via @starting-style — progressively enhanced. */
+  @supports (transition-behavior: allow-discrete) {
+    .kbd-help {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      transition:
+        opacity 180ms ease,
+        transform 180ms ease,
+        overlay 180ms ease allow-discrete,
+        display 180ms ease allow-discrete;
+    }
+
+    .kbd-help:not([open]) {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+    }
+
+    @starting-style {
+      .kbd-help[open] {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+      }
+    }
+
+    .kbd-help::backdrop {
+      opacity: 1;
+      transition:
+        opacity 180ms ease,
+        overlay 180ms ease allow-discrete,
+        display 180ms ease allow-discrete;
+    }
+
+    .kbd-help:not([open])::backdrop {
+      opacity: 0;
+    }
+
+    @starting-style {
+      .kbd-help[open]::backdrop {
+        opacity: 0;
+      }
+    }
+  }
+}
