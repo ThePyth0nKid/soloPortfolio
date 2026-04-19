@@ -7,6 +7,14 @@ import Timeline from './components/Timeline'
 
 const SECTION_IDS = ['top', 'about', 'projects', 'skills', 'timeline']
 
+const SHORTCUTS = [
+  ['j', 'Next section'],
+  ['k', 'Previous section'],
+  ['g t', 'Go to top'],
+  ['?', 'Show this help'],
+  ['Esc', 'Close help'],
+]
+
 function scrollToId(id) {
   if (id === 'top') return window.scrollTo({ top: 0, behavior: 'smooth' })
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -37,7 +45,7 @@ export default function App() {
 
       if (e.key === '?') {
         e.preventDefault()
-        setHelpOpen(true)
+        setHelpOpen((v) => !v)
         return
       }
       if (e.key === 'Escape' && helpOpen) {
@@ -83,9 +91,30 @@ export default function App() {
       <Projects />
       <Skills />
       <Timeline />
-      <footer className="py-8 text-center text-sm text-slate-500 border-t border-slate-800">
-        © 2026 Alex Chen
+      <footer className="py-8 text-center text-slate-500 text-sm">
+        Press <kbd className="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs">?</kbd> for keyboard shortcuts
       </footer>
+
+      <dialog
+        ref={dialogRef}
+        onClose={() => setHelpOpen(false)}
+        onClick={(e) => { if (e.target === dialogRef.current) setHelpOpen(false) }}
+        className="backdrop:bg-black/60 bg-slate-900 text-slate-100 border border-slate-800 rounded-xl p-6 max-w-sm w-[90vw] shadow-2xl"
+      >
+        <h2 className="text-lg font-semibold mb-4">Keyboard shortcuts</h2>
+        <dl className="space-y-2">
+          {SHORTCUTS.map(([keys, desc]) => (
+            <div key={keys} className="flex justify-between items-center gap-4 text-sm">
+              <dt className="text-slate-400">{desc}</dt>
+              <dd className="font-mono">
+                {keys.split(' ').map((k, i) => (
+                  <kbd key={i} className="ml-1 px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs">{k}</kbd>
+                ))}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </dialog>
     </div>
   )
 }
