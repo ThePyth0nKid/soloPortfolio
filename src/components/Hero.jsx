@@ -1,9 +1,28 @@
+import { useEffect, useState } from 'react'
+
+function getGreeting(date = new Date()) {
+  const hour = date.getHours()
+  if (hour < 5) return { text: 'Good night', emoji: '🌙' }
+  if (hour < 12) return { text: 'Good morning', emoji: '☀️' }
+  if (hour < 18) return { text: 'Good afternoon', emoji: '🌤' }
+  if (hour < 22) return { text: 'Good evening', emoji: '🌆' }
+  return { text: 'Good night', emoji: '🌙' }
+}
+
 export default function Hero() {
+  const [greeting, setGreeting] = useState(() => getGreeting())
+
+  useEffect(() => {
+    // Re-check every minute so the greeting stays accurate if the page is left open
+    const id = setInterval(() => setGreeting(getGreeting()), 60 * 1000)
+    return () => clearInterval(id)
+  }, [])
+
   return (
     <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
       <div className="max-w-3xl space-y-6">
         <div className="inline-block px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full text-xs text-purple-400">
-          ✨ Available for new projects
+          {greeting.emoji} {greeting.text} — available for new projects
         </div>
         <h1 className="text-6xl md:text-7xl font-bold tracking-tight">
           Hi, I'm{' '}
